@@ -9,15 +9,20 @@ Cette plate-forme de TP reprend le métier de l'application utilisée pour la pa
   - les utilisateurs doivent pouvoir générer une clef à laquelle ils donnent un nom sur la route `POST /key`
   - utiliser une clef générée pour chiffrer et déchiffrer des messages sur les routes `POST /crypt/encrypt` et `POST /crypt/decrypt`
 
-**TODO** : donner le serveur de test et créer les comptes.
+Un serveur de test de l'application complète sera déployé sur <https://master-auth.fsa-sec.os.univ-lyon1.fr> avec des comptes pour chaque élève.
 
 ## Introduction
 
 Si besoin, installer un environnement <https://nodejs.org/> version _20.1.0_ (ou à défaut laLTS _18.16.0_).
 Il est **recommandé** d'utiliser <https://github.com/nvm-sh/nvm> un environnement _Linux_ ou WSL pour cela.
 
-L'application est développée avec le framework web <https://www.fastify.io/> et quelques plugins de son écosystème. Consulter le début du fichier [app.js](app.js) pour la liste et les docs. Le backend de stockage est une base <https://www.postgresql.org/>.
-Les tests d'intégration sont réalisés avec le nouveau module [node:test](https://nodejs.org/api/test.html) et le module standard d'assertion [node::assert](https://nodejs.org/api/assert.html)
+L'application est développée avec le framework web <https://www.fastify.io/> et quelques plugins de son écosystème.
+Voir l'annexe en fin de document sur son fonctionnement.
+Consulter le début du fichier [app.js](app.js) pour la liste et les docs.
+Le backend de stockage est une base <https://www.postgresql.org/>.
+Les tests d'intégration sont réalisés avec le nouveau module [node:test](https://nodejs.org/api/test.html) et le module standard d'assertion [node:assert](https://nodejs.org/api/assert.html).
+
+Pour la programmation JavaScript en général, consulter l'excellent <https://javascript.info/>.
 
 ### Installation
 
@@ -57,7 +62,7 @@ Les routes suivantes sont disponibles dans l'application finale. Elles sont test
 ╚═════════════════════╧═════════════════╝
 ```
 
-### Modalité de rendu
+### Modalités de rendu
 
 L'application finale est à versionner sur <https://forge.univ-lyon1.fr/>. Les projets seront clonés le mercredi 24 mai. L'évaluation comprendra
 
@@ -121,7 +126,28 @@ que faudrait-il faire d'autre dans le cadre d'une mise en production :
 - sur le reverse proxy web
 - sur la gestion de l'application node
 
-## Annexe
+## Annexes
+
+### Notes Fastify
+
+Quelques notes sur le framework utilisé.
+
+#### Routes
+
+Voir <https://www.fastify.io/docs/latest/Reference/Routes/#full-declaration>.
+
+> `handler(request, reply)`: the function that will handle this request. The Fastify server will be bound to `this` when the handler is called. Note: using an arrow function will break the binding of this.
+
+#### Lifecycle
+
+Voir <https://www.fastify.io/docs/latest/Reference/Lifecycle/>, dont dessins.
+
+> Whenever the user handles the request, the result may be:
+>
+> - in **async** handler: it _returns_ a payload
+> - in **async** handler: it _throws_ an `Error`
+> - in **sync** handler: it _sends_ a payload
+> - in **sync** handler: it _sends_ an `Error` instance
 
 ### Exécution des tests
 
