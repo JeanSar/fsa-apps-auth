@@ -1,0 +1,51 @@
+{
+  "type": "module",
+  "name": "fsa-apps-auth",
+  "description": "Node.js/fastify server crypto service with authentication and authorization",
+  "version": "1.0.0",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "cross-env NODE_ENV=test PGDATABASE=tiwfsa-test node --test",
+    "start": "cross-env NODE_ENV=development nodemon server.js",
+    "start:prod": "cross-env NODE_ENV=production node server.js"
+  },
+  "keywords": [],
+  "author": "THION Romuald",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/auth": "^4.2.0",
+    "@fastify/basic-auth": "^5.0.0",
+    "@fastify/helmet": "^10.1.1",
+    "@fastify/oauth2": "^7.0.1",
+    "@fastify/postgres": "^5.2.0",
+    "@fastify/sensible": "^5.0.0",
+    "@fastify/swagger": "^8.3.1",
+    "@fastify/swagger-ui": "^1.8.1",
+    "argon2": "^0.30.3",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.1",
+    "pg-native": "^3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-security": "^1.7.1",
+    "eslint-plugin-unicorn": "^46.0.0",
+    "fastify-print-routes": "^2.1.0",
+    "nodemon": "^2.0.22",
+    "pino-pretty": "^10.0.0",
+    "prettier": "^2.8.8"
+  }
+}

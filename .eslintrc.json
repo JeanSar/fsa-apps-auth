@@ -1,0 +1,44 @@
+{
+    "env": {
+        "browser": false,
+        "es2022": true,
+        "node": true
+    },
+    "plugins": [
+        "unicorn",
+        "security"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:node/recommended",
+        "plugin:security/recommended",
+        "plugin:import/recommended",
+        "plugin:unicorn/recommended",
+        "plugin:promise/recommended",
+        "prettier"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2022,
+        "sourceType": "module"
+    },
+    "rules": {
+        "import/default": [
+            "off"
+        ],
+        "no-unused-vars": [
+            "warn",
+            {
+                "args": "all",
+                "argsIgnorePattern": "^_|reply|request|opt(ion)?s|done|next|fastify|c(on)?txt"
+            }
+        ],
+        "node/no-unpublished-import": [
+            "error",
+            {
+                "allowModules": [
+                    "tap"
+                ]
+            }
+        ]
+    }
+}
