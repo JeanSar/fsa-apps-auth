@@ -40,6 +40,8 @@ Pour la programmation JavaScript en général, consulter l'excellent <https://ja
 La cible de test est `npm test`. Chaque test peut être exécuté directement par node avec `node --test fichier_test.js`.
 On peut activer le suivi des modifications avec `node --test --watch fichier_test.js`.
 
+Si vous rencontrez un problème lors de l'installation de `pg-native`, installez la `libpq` avec la commande `sudo apt install libpq-dev`. Si le problème persiste, supprimez la dépendance du fichier `package.json`.
+
 ### Routes existantes
 
 Les routes suivantes sont disponibles dans l'application finale. Elles sont testables dans <http://localhost:8000/docs>. La liste suivante est générée par <https://github.com/ShogunPanda/fastify-print-routes>, elle apparait quand on lance l'application.
