@@ -14,10 +14,9 @@
     - [Fastify](#fastify)
     - [Exécution des tests](#exécution-des-tests)
 
-
 Cette plate-forme de TP reprend le métier de l'application utilisée pour la partie haute-disponibilité. Il s'agit ici de reprendre :
 
-- l'authentification, en remplacant [l'authentification HTTP](https://en.wikipedia.org/wiki/Basic_access_authentication) par une authentification par JWT. Les tokens peuvent être obtenus de deux façons différentes
+- l'authentification, en remplaçant [l'authentification HTTP](https://en.wikipedia.org/wiki/Basic_access_authentication) par une authentification par JWT. Les tokens peuvent être obtenus de deux façons différentes
   - via authentification par mot de passe
   - via un tiers d'authentification, ici <https://forge.univ-lyon1.fr/>
 - la gestion des clefs et du chiffrement
@@ -48,7 +47,7 @@ Le backend de stockage est une base <https://www.postgresql.org/>.
 2. donner le nom de votre dépôt dans la colonne `GitLab_authentif` de <https://tomuss.univ-lyon1.fr/>
 3. dans le dossier de travail, créer un fichier `.env` sur le modèle `.env.default` fourni
 4. installer les dépendances `npm install`
-5. créer une base de données de PostgreSQL (et une base de test) en éxécutant succesivement dans le dossier `database/`
+5. créer une base de données de PostgreSQL (et une base de test) en exécutant successivement dans le dossier `database/`
    - [create_database.sh](database/create_database.sh) pour créer la base avec le compte privilégié (`postgres`)
    - [schema_reset.sh](database/schema_reset.sh) pour créer les tables avec le compte non-privilégié (`tiwfsa`)
    - [dataset_reset.sh](database/dataset_reset.sh) pour peupler les tables avec le compte non-privilégié (`tiwfsa`). Adapter le dataset pour que votre login UCBL soit administrateur.
