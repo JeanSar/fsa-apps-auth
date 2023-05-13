@@ -1,5 +1,20 @@
 # TIWFSA: authentification, autorisation, cryptographie
 
+- [TIWFSA: authentification, autorisation, cryptographie](#tiwfsa-authentification-autorisation-cryptographie)
+  - [Introduction](#introduction)
+    - [Installation](#installation)
+    - [Routes existantes](#routes-existantes)
+    - [Modalités de rendu](#modalités-de-rendu)
+  - [Travail à réaliser](#travail-à-réaliser)
+    - [Authentification](#authentification)
+    - [Gestion des clefs et du chiffrement](#gestion-des-clefs-et-du-chiffrement)
+    - [Autorisations](#autorisations)
+  - [Ouverture](#ouverture)
+  - [Annexes](#annexes)
+    - [Fastify](#fastify)
+    - [Exécution des tests](#exécution-des-tests)
+
+
 Cette plate-forme de TP reprend le métier de l'application utilisée pour la partie haute-disponibilité. Il s'agit ici de reprendre :
 
 - l'authentification, en remplacant [l'authentification HTTP](https://en.wikipedia.org/wiki/Basic_access_authentication) par une authentification par JWT. Les tokens peuvent être obtenus de deux façons différentes
@@ -9,7 +24,7 @@ Cette plate-forme de TP reprend le métier de l'application utilisée pour la pa
   - les utilisateurs doivent pouvoir générer une clef à laquelle ils donnent un nom sur la route `POST /key`
   - utiliser une clef générée pour chiffrer et déchiffrer des messages sur les routes `POST /crypt/encrypt` et `POST /crypt/decrypt`
 
-Un serveur de test de l'application complète sera déployé sur <https://master-auth.fsa-sec.os.univ-lyon1.fr> avec des comptes pour chaque élève.
+Un serveur de test de l'application complète sera déployé sur <https://master-auth.fsa-sec.os.univ-lyon1.fr> avec des comptes pour chaque élève (**TODO**).
 
 ## Introduction
 
@@ -17,12 +32,15 @@ Si besoin, installer un environnement <https://nodejs.org/> version _20.1.0_ (ou
 Il est **recommandé** d'utiliser <https://github.com/nvm-sh/nvm> un environnement _Linux_ ou WSL pour cela.
 
 L'application est développée avec le framework web <https://www.fastify.io/> et quelques plugins de son écosystème.
-Voir l'annexe en fin de document sur son fonctionnement.
 Consulter le début du fichier [app.js](app.js) pour la liste et les docs.
-Le backend de stockage est une base <https://www.postgresql.org/>.
-Les tests d'intégration sont réalisés avec le nouveau module [node:test](https://nodejs.org/api/test.html) et le module standard d'assertion [node:assert](https://nodejs.org/api/assert.html).
+Voir [l'annexe Fastify](#fastify) sur le fonctionnement du framework.
+
+Les tests d'intégration sont réalisés avec le récent module [node:test](https://nodejs.org/api/test.html) et le module standard d'assertion [node:assert](https://nodejs.org/api/assert.html).
+Voir [en annexe](#exécution-des-tests) le résultat de l'exécution de tous les tests
 
 Pour la programmation JavaScript en général, consulter l'excellent <https://javascript.info/>.
+
+Le backend de stockage est une base <https://www.postgresql.org/>.
 
 ### Installation
 
@@ -130,7 +148,7 @@ que faudrait-il faire d'autre dans le cadre d'une mise en production :
 
 ## Annexes
 
-### Notes Fastify
+### Fastify
 
 Quelques notes sur le framework utilisé.
 
@@ -138,11 +156,13 @@ Quelques notes sur le framework utilisé.
 
 Voir <https://www.fastify.io/docs/latest/Reference/Routes/#full-declaration>.
 
-> `handler(request, reply)`: the function that will handle this request. The Fastify server will be bound to `this` when the handler is called. Note: using an arrow function will break the binding of this.
+> `handler(request, reply)`: the function that will handle this request. The Fastify server will be bound to `this` when the handler is called. Note: using an arrow function will break the binding of `this`.
+
+**Conseil** utiliser plutôt `request.server` que `this`.
 
 #### Lifecycle
 
-Voir <https://www.fastify.io/docs/latest/Reference/Lifecycle/>, dont dessins.
+Voir <https://www.fastify.io/docs/latest/Reference/Lifecycle/> et les captures ci-après.
 
 > Whenever the user handles the request, the result may be:
 >
@@ -150,6 +170,14 @@ Voir <https://www.fastify.io/docs/latest/Reference/Lifecycle/>, dont dessins.
 > - in **async** handler: it _throws_ an `Error`
 > - in **sync** handler: it _sends_ a payload
 > - in **sync** handler: it _sends_ an `Error` instance
+
+##### Requêtes
+
+![Cycle de vie des requêtes](img/Fastify_Lifecycle.png)
+
+##### Réponses
+
+![Cycle de vie des réponses](img/Fastify_Lifecycle_reply.png)
 
 ### Exécution des tests
 
