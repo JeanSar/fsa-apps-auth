@@ -6,10 +6,12 @@
     - [Routes existantes](#routes-existantes)
     - [Modalités de rendu](#modalités-de-rendu)
   - [Travail à réaliser](#travail-à-réaliser)
-    - [Authentification](#authentification)
-    - [Gestion des clefs et du chiffrement](#gestion-des-clefs-et-du-chiffrement)
+    - [Gestion JWT](#gestion-jwt)
+    - [Authentification login/password](#authentification-loginpassword)
+    - [Authentification OAuth2](#authentification-oauth2)
+  - [Gestion des clefs et du chiffrement](#gestion-des-clefs-et-du-chiffrement)
     - [Autorisations](#autorisations)
-  - [Ouverture](#ouverture)
+  - [Recommandations générales](#recommandations-générales)
   - [Annexes](#annexes)
     - [Fastify](#fastify)
     - [Exécution des tests](#exécution-des-tests)
@@ -18,12 +20,12 @@ Cette plate-forme de TP reprend le métier de l'application utilisée pour la pa
 
 - l'authentification, en remplaçant [l'authentification HTTP](https://en.wikipedia.org/wiki/Basic_access_authentication) par une authentification par JWT. Les tokens peuvent être obtenus de deux façons différentes
   - via authentification par mot de passe
-  - via un tiers d'authentification, ici <https://forge.univ-lyon1.fr/>
+  - via un tiers d'authentification, ici OAuth2 GitLab de <https://forge.univ-lyon1.fr/>
 - la gestion des clefs et du chiffrement
   - les utilisateurs doivent pouvoir générer une clef à laquelle ils donnent un nom sur la route `POST /key`
   - utiliser une clef générée pour chiffrer et déchiffrer des messages sur les routes `POST /crypt/encrypt` et `POST /crypt/decrypt`
 
-Un serveur de test de l'application complète sera déployé sur <https://master-auth.fsa-sec.os.univ-lyon1.fr> avec des comptes pour chaque élève (**TODO**).
+Un serveur de test de l'application complète est déployé sur <https://master-auth.fsa-sec.os.univ-lyon1.fr> avec des comptes pour chaque élève (**TODO**).
 
 ## Introduction
 
@@ -83,29 +85,33 @@ Les routes suivantes sont disponibles dans l'application finale. Elles sont test
 
 ### Modalités de rendu
 
-L'application finale est à versionner sur <https://forge.univ-lyon1.fr/>. Les projets seront clonés le mercredi 24 mai. L'évaluation comprendra
+L'application finale est à versionner sur <https://forge.univ-lyon1.fr/>.
+**Les projets seront clonés le mercredi 24 mai à 08:00**.
+L'évaluation comprend :
 
-- une partie automatique les tests `node:test` : le fichier `.env` sera remplacé et les tests remplacés par des nouveaux;
+- une partie automatique les tests `node:test`
+  - le fichier `.env` sera remplacé et les tests remplacés avat d'être exécutés;
+- un court [modèle de rapport](./RAPPORT.md) à compléter et à versionner dans le dépôt;
 - une partie ouverte lors de l'épreuve du mercredi 14/06 à 8h30.
 
 ## Travail à réaliser
-
-Généralement, il faudra prendre soin sur les codes HTTP 400, 401, 403 et 404 et activer progressivement les tests qui ont été désactivés.
 
 Il est **important de respecter les schémas et routes fournies**, l'API de votre application **doit** être conforme à la spécification sinon les tests échoueront.
 
 Il n'y a rien à faire sur les routes `/health`, presque rien sur les routes `/key` et pas grand chose sur les routes `/user`, essentiellement de l'autorisation. Le travail se concentre surtout sur les routes `/auth`, avec un peu de travail sur l'application principale `app.js` et sur les routes `/crypt`. Il n'y a _a priori_ rien à modifier sur la base de données.
 
-### Authentification
+Généralement, il faudra prendre soin sur les codes HTTP 400, 401, 403 et 404 et activer progressivement les tests qui ont été désactivés.
 
-#### Gestion JWT
+La route `GET /heath/auth` permet de tester l'authentification.
+
+### Gestion JWT
 
 - compléter la vérification de token `verifyJWTToken()`
   - cette fonction est déjà branchée sur les routes avec `fastify.auth([fastify.verifyJWTToken, fastify.basicAuth]))`
 - compléter la génération de token, `generateJWTToken()`
   - l'utiliser ensuite pour produire un token après l'authentification OAuth ou par login/password
 
-#### Authentification login/password
+### Authentification login/password
 
 - choisir et motiver un algorithme de hashage du mot de passe
 - implémenter `verifyLoginPassword()` pour vérifier un mot de passe en base
@@ -113,7 +119,7 @@ Il n'y a rien à faire sur les routes `/health`, presque rien sur les routes `/k
 - implémenter `postAuthLoginHandler()` pour générer le JWT en cas d'authentification réussie
 - vérifier que l'authentification `Authorization: Basic <credentials>` fonctionne
 
-#### Authentification OAuth2
+### Authentification OAuth2
 
 On utiliser ici le plugin <https://github.com/fastify/fastify-oauth2> déjà partiellement configuré dans [app.js](app.js) (à décommenter).
 
@@ -121,7 +127,7 @@ On utiliser ici le plugin <https://github.com/fastify/fastify-oauth2> déjà par
 
 Vous pouvez choisir deux alternatives : le OAuth2 directement avec le _scope_ `read_user` ou la surcouche OpenID Connect avec le scope `openid`. Ce dernier fournira un token `id_token` dont il faut vérifier la signature.
 
-### Gestion des clefs et du chiffrement
+## Gestion des clefs et du chiffrement
 
 - compléter `GET /key/:username`
 - compléter `POST /key/`
@@ -138,18 +144,25 @@ Vous pouvez choisir deux alternatives : le OAuth2 directement avec le _scope_ `r
   - on ne peut accéder à la liste des clefs d'un utilisateur que si on accèdee à soi-même ou si on est administrateur
   - on ne crée que des clefs sur son propre compte
 
-## Ouverture
+## Recommandations générales
 
-que faudrait-il faire d'autre dans le cadre d'une mise en production :
+Formuler des recommandations ou précautions sur la sécurité, notamment dans le cadre d'un déploiement en production qui diffère de la cible de développement :
 
-- sur le reverse proxy web
-- sur la gestion de l'application node
+- la BD postgres
+- l'OS
+- le reverse proxy
+- l'application node
+- les fonctionnalités manquantes
+
+Pour chacune des recommandations, indiquer **si elle est déjà effectuée ou pas sur le serveur de démonstration** <https://master-auth.fsa-sec.os.univ-lyon1.fr/>.
+
+Ces recommandation figureront dans le [rapport](./RAPPORT.md), mais on ne demande **pas** de les réaliser. Si toutefois vous en réalisez tout ou partie dans votre application, l'expliciter.
 
 ## Annexes
 
 ### Fastify
 
-Quelques notes sur le framework utilisé.
+Quelques notes sur le framework <https://www.fastify.io/> utilisé.
 
 #### Routes
 
