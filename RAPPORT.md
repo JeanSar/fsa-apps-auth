@@ -12,9 +12,9 @@
 
 ## Administratif
 
-- NOM Prénom :
-- Login UBCL :
-- Lien GitLab du projet :
+- NOM Prénom : SAURY Jean
+- Login UBCL : p1805563
+- Lien GitLab du projet : https://forge.univ-lyon1.fr/p1805563/fsa-apps-auth
 
 ## Travail réalisé
 
