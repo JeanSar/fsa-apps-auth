@@ -86,6 +86,7 @@ Les routes suivantes sont disponibles dans l'application finale. Elles sont test
 ### Modalités de rendu
 
 L'application finale est à versionner sur <https://forge.univ-lyon1.fr/>.
+_Penser à ajouter `romuald.thion` comme `reporter` à votre dépôt_.
 **Les projets seront clonés le mercredi 24 mai à 08:00**.
 L'évaluation comprend :
 
@@ -148,11 +149,11 @@ Vous pouvez choisir deux alternatives : le OAuth2 directement avec le _scope_ `r
 
 Formuler des recommandations ou précautions sur la sécurité, notamment dans le cadre d'un déploiement en production qui diffère de la cible de développement :
 
-- la BD postgres
+- les onctionnalités manquantes de l'application
+- l'instance PostgreSQL
 - l'OS
-- le reverse proxy
-- l'application node
-- les fonctionnalités manquantes
+- le reverse proxy nginx
+- l'application node en mode `production`
 
 Pour chacune des recommandations, indiquer **si elle est déjà effectuée ou pas sur le serveur de démonstration** <https://master-auth.fsa-sec.os.univ-lyon1.fr/>.
 
