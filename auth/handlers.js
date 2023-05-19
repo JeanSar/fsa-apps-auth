@@ -129,11 +129,20 @@ async function postAuthLoginHandler(request, reply) {
     })
     return reply.code(401).send(new Error(`Username or password is missing`))
   }
-  const username = request.body.username
-  const password = request.body.password
-  await verifyLoginPassword(username, password, request, reply)
-  const jwtToken = generateJWTToken(request.user.username, request.user.role)
-  reply.code(200).send(jwtToken)
+  try  {
+    const username = request.body.username
+    const password = request.body.password
+    await verifyLoginPassword(username, password, request, reply)
+    const jwtToken = generateJWTToken(request.user.username, request.user.role)
+    reply.code(200).send(jwtToken)
+    
+  } catch(error) {
+    request.server.log.error(error)
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(500).send(new Error(`Server Error`))
+  }
 }
 
 export {
