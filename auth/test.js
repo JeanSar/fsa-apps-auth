@@ -9,8 +9,7 @@ import build from "../app.js"
 
 const secret = Buffer.from(process.env.JWT_SECRET, "hex")
 
-// TODO : activer ces tests et les vérifier
-describe.skip("JWT authentication via login/password on /auth/login", async () => {
+describe("JWT authentication via login/password on /auth/login", async () => {
   let app
   before(async () => {
     app = await build()

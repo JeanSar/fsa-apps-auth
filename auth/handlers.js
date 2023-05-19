@@ -7,7 +7,9 @@ const secret = Buffer.from(process.env.JWT_SECRET, "hex")
 // helper
 function generateJWTToken(username, role) {
   // TODO : compléter
-  throw new Error("Not implemented")
+  const token = jwt.sign({ sub: username, role: role }, secret)
+  return token
+  //throw new Error("Not implemented")
 }
 
 // set user's info once authenticated, user by verify{JWTToken, LoginPassword} functions
@@ -20,15 +22,30 @@ function setRequestUser(username, role, request) {
 // Handler used by fastify.auth, decorates fastify instance
 async function verifyJWTToken(request, reply) {
   // TODO : compléter
-  // setRequestUser(sub, role, request)
-  throw new Error("Not implemented")
+  const auth = request.headers.authorization
+  const token = auth.split(' ')[1]
+  jwt.verify(token, secret, function(error, decoded) {
+    console.log(decoded)
+    console.log(error)
+    setRequestUser(decoded.sub, decoded.role, request)
+  });
 }
 
 // intermediate function : DO NOT reply JWT. Used by postAuthLoginHandler and "@fastify/basic-auth"
 async function verifyLoginPassword(username, password, request, reply) {
-  // TODO : compléter
-  // setRequestUser(username, role, request)
-  throw new Error("Not implemented")
+  request.server.log.info(`check if user ${username} exists with password ${password}`)
+  const results = await request.server.pg.query(
+    "SELECT role FROM account WHERE username =  $1 and password = $2",
+    [username, password]
+  )
+  if (results.rowCount !== 1) {
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(401).send(`No such user exists with provided password`)
+  }
+  const role = results.rows[0].role
+  setRequestUser(username, role, request)
 }
 
 // Get user's information from Gitlab
@@ -50,18 +67,24 @@ async function oauthCallbackHandler(request, reply) {
   // TODO : compléter
   const { code: authorizationCode } = request.query
   request.server.log.info(`authorization code: ${authorizationCode}`)
-
-
-  // setRequestUser(username, role, request)
-  // const jwtToken = generateJWTToken(username, role)
-  // reply.send(jwtToken)
-  reply.notImplemented()
+  const profile = fetchGitlabUserProfile(authorizationCode)
+  console.log(profile)
+  const username = profile.username
+  const role = profile.role
+  setRequestUser(username, role, request)
+  const jwtToken = generateJWTToken(username, role)
+  reply.send(jwtToken)
 }
 
 // Route handler for login/password
 async function postAuthLoginHandler(request, reply) {
-    // TODO : compléter
-  reply.notImplemented()
+  // TODO : compléter
+  console.log(request.body)
+  const username = request.body.username
+  const password = request.body.password
+  await verifyLoginPassword(username, password, request, reply)
+  const jwtToken = generateJWTToken(request.user.username, request.user.role)
+  reply.send(jwtToken)
 }
 
 export {
