@@ -6,10 +6,24 @@ const secret = Buffer.from(process.env.JWT_SECRET, "hex")
 
 // helper
 function generateJWTToken(username, role) {
-  // TODO : compléter
-  const token = jwt.sign({ sub: username, role: role }, secret)
-  return token
-  //throw new Error("Not implemented")
+  if(!username || !role) {
+    throw new Error("generateJWTToken: Invalid parameter")
+  }
+  try {
+    const token = jwt.sign(
+      { 
+        sub: username, 
+        role: role, 
+        iat: Math.floor(Date.now() / 1000)  + (60 * 60)
+      }, 
+      secret
+    )
+    return token
+  } catch (error) {
+    console.log(error)
+    throw new Error("generateJWTToken: Error while generating JWT token")
+  }
+
 }
 
 // set user's info once authenticated, user by verify{JWTToken, LoginPassword} functions
@@ -21,14 +35,27 @@ function setRequestUser(username, role, request) {
 
 // Handler used by fastify.auth, decorates fastify instance
 async function verifyJWTToken(request, reply) {
-  // TODO : compléter
-  const auth = request.headers.authorization
-  const token = auth.split(' ')[1]
-  jwt.verify(token, secret, function(error, decoded) {
-    console.log(decoded)
-    console.log(error)
+  request.server.log.info("verifyJWTToken")
+  if (!request.raw.headers.authorization) {
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(401).send(new Error(`No JWT token provided`))
+  }
+  try {
+    const auth = request.raw.headers.authorization
+    const token = auth.split(' ')[1]
+    request.server.log.info("Parsing JWT : " + token)
+    const decoded = jwt.verify(token, secret)
+    request.server.log.info(decoded)
     setRequestUser(decoded.sub, decoded.role, request)
-  });
+  } catch(error) {
+    request.server.log.error(error)
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(401).send(new Error(`Unable to process JWT token`))
+  }
 }
 
 // intermediate function : DO NOT reply JWT. Used by postAuthLoginHandler and "@fastify/basic-auth"
@@ -42,7 +69,7 @@ async function verifyLoginPassword(username, password, request, reply) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(401).send(`No such user exists with provided password`)
+    return reply.code(401).send(new Error(`No such user exists with provided password`))
   }
   const role = results.rows[0].role
   setRequestUser(username, role, request)
@@ -78,13 +105,18 @@ async function oauthCallbackHandler(request, reply) {
 
 // Route handler for login/password
 async function postAuthLoginHandler(request, reply) {
-  // TODO : compléter
-  console.log(request.body)
+  request.server.log.info("postAuthLoginHandler")
+  if(!request.body.username || !request.body.password) {
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(401).send(new Error(`Username or password is missing`))
+  }
   const username = request.body.username
   const password = request.body.password
   await verifyLoginPassword(username, password, request, reply)
   const jwtToken = generateJWTToken(request.user.username, request.user.role)
-  reply.send(jwtToken)
+  reply.code(200).send(jwtToken)
 }
 
 export {
