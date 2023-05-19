@@ -21,8 +21,8 @@
 Cocher ce qui est fonctionnel dans votre application.
 
 - Gestion JWT
-  - [ ] vérification de token `verifyJWTToken()`
-  - [ ] génération de token, `generateJWTToken()`
+  - [X] vérification de token `verifyJWTToken()`
+  - [X] génération de token, `generateJWTToken()`
 - Login/password
   - [ ] implémenter `verifyLoginPassword()` pour vérifier un mot de passe en base
   - [ ] compléter `postUserHandler()` pour hasher le mot de passe en base de données

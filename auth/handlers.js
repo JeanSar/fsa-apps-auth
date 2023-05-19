@@ -60,19 +60,36 @@ async function verifyJWTToken(request, reply) {
 
 // intermediate function : DO NOT reply JWT. Used by postAuthLoginHandler and "@fastify/basic-auth"
 async function verifyLoginPassword(username, password, request, reply) {
+  request.server.log.info(verifyLoginPassword)
   request.server.log.info(`check if user ${username} exists with password ${password}`)
-  const results = await request.server.pg.query(
-    "SELECT role FROM account WHERE username =  $1 and password = $2",
-    [username, password]
-  )
-  if (results.rowCount !== 1) {
+  if(!username || !password) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(401).send(new Error(`No such user exists with provided password`))
+    return reply.code(401).send(new Error(`Username or password is missing`))
   }
-  const role = results.rows[0].role
-  setRequestUser(username, role, request)
+  try {
+    // seems okay to prevent sql injection attack https://stackoverflow.com/questions/58174695/prevent-sql-injection-with-nodejs-and-postgres
+    const results = await request.server.pg.query(
+      "SELECT role FROM account WHERE username = $1 and password = $2",
+      [username, password]
+    )
+    console.log(results)
+    if (results.rowCount !== 1) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(401).send(new Error(`No such user exists with provided password`))
+    }
+    const role = results.rows[0].role
+    setRequestUser(username, role, request)
+  } catch (error) {
+    request.server.log.error(error)
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(401).send(new Error(`Unable to retrieve to retrieve login/password`))
+  }
 }
 
 // Get user's information from Gitlab
