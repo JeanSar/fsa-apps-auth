@@ -14,7 +14,7 @@ import fastifyAuth from "@fastify/auth"
 // HTTP Basic Auth, <https://github.com/fastify/fastify-basic-auth>
 import fastifyBasicAuth from "@fastify/basic-auth"
 // OAuth2 plugin <https://github.com/fastify/fastify-oauth2>
-// import fastifyOauth2 from "@fastify/oauth2"
+import fastifyOauth2 from "@fastify/oauth2"
 // Swagger generator <https://github.com/fastify/fastify-swagger
 import fastifySwagger from "@fastify/swagger"
 // Swagger UI <https://github.com/fastify/fastify-swagger-ui
@@ -151,22 +151,29 @@ async function build(options = {}) {
   })
 
   // TODO : configurer l'authentification OAuth sur la forge
-  // app.register(fastifyOauth2, {
-  //   name: "OAuth2",
-  //   credentials: {
-  //     auth: {
-  //       authorizeHost: "https://forge.univ-lyon1.fr",
-  //       authorizePath: "/oauth/authorize",
-  //       tokenHost: "https://forge.univ-lyon1.fr",
-  //       tokenPath: "/oauth/token",
-  //     },
-  //   },
-  //   schema: {
-  //     tags: ["auth"],
-  //     summary: "Principal (redirect) route for OAuth2",
-  //     description: "GitLab OAuth2 (w/ or w/o OIDC) authentication, redirects to provider.",
-  //   },
-  // })
+  app.register(fastifyOauth2, {
+    name: "OAuth2",
+    scope: "read_user",
+    credentials: {
+      client: {
+        id: process.env.OAUTH2_CLIENT_ID_GITLAB,
+        secret: process.env.OAUTH2_CLIENT_SECRET_GITLAB
+      },
+      auth: {
+        authorizeHost: "https://forge.univ-lyon1.fr",
+        authorizePath: "/oauth/authorize",
+        tokenHost: "https://forge.univ-lyon1.fr",
+        tokenPath: "/oauth/token",
+      },
+    },
+    startRedirectPath: '/auth/gitlab',
+    callbackUri: `${serverUrl}/auth/callback`, 
+    schema: {
+      tags: ["auth"],
+      summary: "Principal (redirect) route for OAuth2",
+      description: "GitLab OAuth2 (w/ or w/o OIDC) authentication, redirects to provider.",
+    },
+  })
 
   // Register applicative routes
   app.register(authRoutes, { prefix: "/auth" })

@@ -125,8 +125,7 @@ describe("HTTP basic authentication on /health/auth", async () => {
   })
 })
 
-// TODO : activer ces tests et les vérifier
-describe.skip("OAuth2 authentication on /auth/gitlab",  async () => {
+describe("OAuth2 authentication on /auth/gitlab",  async () => {
   let app
   before(async () => {
     app = await build()
@@ -136,7 +135,7 @@ describe.skip("OAuth2 authentication on /auth/gitlab",  async () => {
   })
 
   let state
-  // http GET http://localhost:8000/auth/github
+  // http GET http://localhost:8000/auth/gitlab
   test("GET /auth/gitlab, 302 redirect", { skip: false }, async (ctxt) => {
     const response = await app.inject({
       method: "GET",

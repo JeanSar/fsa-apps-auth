@@ -27,8 +27,8 @@ values
     ),
     (
         -- ici votre compte gitlab/ucbl
-        'romuald.thion',
-        'romulus@example.com',
+        'p1805563',
+        'jean.saury@univ-lyon1.fr',
         -- pas de mot de passe, OAuth2 seulement
         NULL,
         'admin'

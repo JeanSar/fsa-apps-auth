@@ -102,7 +102,7 @@ async function verifyLoginPassword(username, password, request, reply) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(500).send(new Error(`Unable to retrieve to retrieve login/password`))
+    return reply.code(500).send(new Error(`Unable to retrieve login/password`))
   }
 }
 
@@ -122,16 +122,32 @@ async function fetchGitlabUserProfile(glAccessToken) {
 
 // Get GitHub access token from authorization code, manual
 async function oauthCallbackHandler(request, reply) {
-  // TODO : compléter
+  request.server.log.info("oauthCallbackHandler")
+  if(!request.query) {
+    throw new Error("Empty query provided")
+  }
   const { code: authorizationCode } = request.query
   request.server.log.info(`authorization code: ${authorizationCode}`)
-  const profile = fetchGitlabUserProfile(authorizationCode)
-  console.log(profile)
-  const username = profile.username
-  const role = profile.role
-  setRequestUser(username, role, request)
-  const jwtToken = generateJWTToken(username, role)
-  reply.send(jwtToken)
+  try {
+    const profile = await fetchGitlabUserProfile(authorizationCode)
+    request.server.log.info(profile)
+    if(!profile.username || !profile.role) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(401).send(new Error(profile.message ?? "Unable to fetch Gitab user profile"))
+    }
+    setRequestUser(profile.username, profile.role, request)
+    const jwtToken = generateJWTToken(request.user.username, request.user.role)
+    return reply.code(200).send(jwtToken)
+  } catch(error) {
+    request.server.log.error(error)
+    reply.headers({
+      'content-type': 'application/json; charset=utf-8'
+    })
+    return reply.code(500).send(new Error(`Unable to perfom oauth`))
+  }
+
 }
 
 // Route handler for login/password
@@ -155,7 +171,7 @@ async function postAuthLoginHandler(request, reply) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(500).send(new Error(`Server Error`))
+    return reply.code(500).send(new Error(`Unable to perform login auth`))
   }
 }
 
