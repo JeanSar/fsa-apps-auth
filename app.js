@@ -143,11 +143,9 @@ async function build(options = {}) {
 
   // Decorate fastify with authentication and authorization logic
   app.register(fastifyAuth)
-  // TODO : compléter la fonction verifyJWTToken
   app.decorate("verifyJWTToken", verifyJWTToken)
 
   app.register(fastifyBasicAuth, {
-    // TODO : compléter la fonction verifyLoginPassword
     validate: verifyLoginPassword,
     authenticate: false, 
   })
