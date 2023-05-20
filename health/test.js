@@ -14,9 +14,8 @@ describe("Health routes on /health", async () => {
     await app.close()
   })
 
-  // TODO : activer ce tests et le vérifier
   // http GET http://localhost:8000/health/auth
-  test("GET /health/auth, unauthorized", { skip: true }, async (ctxt) => {
+  test("GET /health/auth, unauthorized", { skip: false }, async (ctxt) => {
     const response = await app.inject({
       method: "GET",
       url: "/health/auth",

@@ -38,36 +38,41 @@ function setRequestUser(username, role, request) {
 async function verifyJWTToken(request, reply) {
   request.server.log.info("verifyJWTToken")
   if (!request.raw.headers.authorization) {
-    reply.headers({
-      'content-type': 'application/json; charset=utf-8'
-    })
-    return reply.code(401).send(new Error(`No JWT token provided`))
+    throw new Error(`No JWT token provided`)
+  }
+  const auth = request.raw.headers.authorization
+  if(!auth.startsWith('Bearer ')) {
+    throw new Error(`Not a JWT token`)
   }
   try {
-    const auth = request.raw.headers.authorization
     const token = auth.split(' ')[1]
     request.server.log.info("Parsing JWT : " + token)
-    const decoded = jwt.verify(token, secret)
-    request.server.log.info(decoded)
-    setRequestUser(decoded.sub, decoded.role, request)
+    jwt.verify(token, secret, function(error, decoded) {
+      if(error) {
+        reply.headers({
+          'content-type': 'application/json; charset=utf-8'
+        })
+        return reply.code(401).send(error)
+      } else {
+        request.server.log.info(decoded)
+        setRequestUser(decoded.sub, decoded.role, request)
+      }
+    });
   } catch(error) {
     request.server.log.error(error)
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(401).send(new Error(`Unable to process JWT token`))
+    return reply.code(500).send(new Error(`Unable to process JWT token`))
   }
 }
 
 // intermediate function : DO NOT reply JWT. Used by postAuthLoginHandler and "@fastify/basic-auth"
 async function verifyLoginPassword(username, password, request, reply) {
-  request.server.log.info(verifyLoginPassword)
+  request.server.log.info("verifyLoginPassword")
   request.server.log.info(`check if user ${username} exists with password ${password}`)
   if(!username || !password) {
-    reply.headers({
-      'content-type': 'application/json; charset=utf-8'
-    })
-    return reply.code(401).send(new Error(`Username or password is missing`))
+    throw new Error(`Username or password is missing`)
   }
   try {
     // seems okay to prevent sql injection attack https://stackoverflow.com/questions/58174695/prevent-sql-injection-with-nodejs-and-postgres
@@ -97,7 +102,7 @@ async function verifyLoginPassword(username, password, request, reply) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(401).send(new Error(`Unable to retrieve to retrieve login/password`))
+    return reply.code(500).send(new Error(`Unable to retrieve to retrieve login/password`))
   }
 }
 
