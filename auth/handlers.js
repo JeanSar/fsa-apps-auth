@@ -1,5 +1,6 @@
 // at the beginning of the file, import jwt and assign to a variable
 import jwt from "jsonwebtoken"
+import bcrypt from 'bcrypt'
 
 // convert secret in hex string to bytes
 const secret = Buffer.from(process.env.JWT_SECRET, "hex")
@@ -71,18 +72,26 @@ async function verifyLoginPassword(username, password, request, reply) {
   try {
     // seems okay to prevent sql injection attack https://stackoverflow.com/questions/58174695/prevent-sql-injection-with-nodejs-and-postgres
     const results = await request.server.pg.query(
-      "SELECT role FROM account WHERE username = $1 and password = $2",
-      [username, password]
+      "SELECT role, password FROM account WHERE username = $1",
+      [username]
     )
     console.log(results)
-    if (results.rowCount !== 1) {
+    if (results.rowCount == 1) {
+      if( await bcrypt.compare(password, results.rows[0].password)) {
+        const role = results.rows[0].role
+        setRequestUser(username, role, request)
+      } else {
+        reply.headers({
+          'content-type': 'application/json; charset=utf-8'
+        })
+        return reply.code(401).send(new Error(`Incorrect password`))
+      }
+    } else {
       reply.headers({
         'content-type': 'application/json; charset=utf-8'
       })
-      return reply.code(401).send(new Error(`No such user exists with provided password`))
+      return reply.code(401).send(new Error(`Username not found`))
     }
-    const role = results.rows[0].role
-    setRequestUser(username, role, request)
   } catch (error) {
     request.server.log.error(error)
     reply.headers({
@@ -135,7 +144,7 @@ async function postAuthLoginHandler(request, reply) {
     await verifyLoginPassword(username, password, request, reply)
     const jwtToken = generateJWTToken(request.user.username, request.user.role)
     reply.code(200).send(jwtToken)
-    
+
   } catch(error) {
     request.server.log.error(error)
     reply.headers({

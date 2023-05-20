@@ -24,9 +24,9 @@ Cocher ce qui est fonctionnel dans votre application.
   - [X] vérification de token `verifyJWTToken()`
   - [X] génération de token, `generateJWTToken()`
 - Login/password
-  - [ ] implémenter `verifyLoginPassword()` pour vérifier un mot de passe en base
-  - [ ] compléter `postUserHandler()` pour hasher le mot de passe en base de données
-  - [ ] implémenter `postAuthLoginHandler()` pour générer le JWT en cas d'authentification réussie
+  - [X] implémenter `verifyLoginPassword()` pour vérifier un mot de passe en base
+  - [X] compléter `postUserHandler()` pour hasher le mot de passe en base de données
+  - [X] implémenter `postAuthLoginHandler()` pour générer le JWT en cas d'authentification réussie
 - OAuth2
   - [ ] compléter `oauthCallbackHandler()` pour la route vers laquelle GitLab redirige
 - Gestion des clefs

@@ -83,7 +83,7 @@ describe("HTTP basic authentication on /health/auth", async () => {
 
   // TODO : activer ces tests et les vérifier
   // http GET http://localhost:8000/health/auth --auth user1:iloveu
-  test("GET /health/auth, authorized", { skip: true }, async (ctxt) => {
+  test("GET /health/auth, authorized", { skip: false }, async (ctxt) => {
     const user_pass = Buffer.from(`user1:iloveu`)
     const response = await app.inject({
       method: "GET",

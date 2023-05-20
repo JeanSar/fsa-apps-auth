@@ -1,3 +1,6 @@
+import bcrypt from 'bcrypt'
+const saltRounds = 10
+
 async function getUserHandler(request, reply) {
   const { username } = request.params
 
@@ -15,8 +18,8 @@ async function getUserHandler(request, reply) {
 async function postUserHandler(request, reply) {
   const { username, email, password, role } = request.body
   const roleWithDefault = role ?? "normal"
-  // TODO : hasher correctement
-  const hashedPassword = password
+
+  const hashedPassword = await bcrypt.hash(password, saltRounds)
 
   request.server.log.info(
     `post user ${username} (${email}) with password ${password} and role "${roleWithDefault}"]`,
