@@ -10,19 +10,19 @@ values
     (
         'admin',
         'admin@example.com',
-        'admin',
+        crypt('admin', gen_salt('bf', 8)),
         'admin'
     ),
     (
         'user1',
         'user1@example.com',
-        'iloveu',
+        crypt('iloveu', gen_salt('bf', 8)),
         'normal'
     ),
     (
         'user2',
         'user2@example.com',
-        'azerty',
+        crypt('azerty', gen_salt('bf', 8)),
         default
     ),
     (

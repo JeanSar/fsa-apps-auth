@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-if [[ $(id --user --name) == "postgres" ]]; then
+if [[ $(id -u -n) == "postgres" ]]; then
     echo "Postgres should not run this file"
     exit 1
 fi

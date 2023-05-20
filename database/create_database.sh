@@ -3,9 +3,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # https://stackoverflow.com/questions/42875809/checking-sudo-in-bash-script-with-if-statements
-echo "Current user is $(id --user --name)"
+echo "Current user is $(id -u -n)"
 
-if [[ $(id --user --name) == "postgres" ]]; then
+if [[ $(id -u -n) == "postgres" ]]; then
     echo "Postgres user running"
 else
     echo "Please impersonate postgres with 'sudo --shell --user postgres'"
