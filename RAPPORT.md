@@ -28,10 +28,10 @@ Cocher ce qui est fonctionnel dans votre application.
   - [X] compléter `postUserHandler()` pour hasher le mot de passe en base de données
   - [X] implémenter `postAuthLoginHandler()` pour générer le JWT en cas d'authentification réussie
 - OAuth2
-  - [ ] compléter `oauthCallbackHandler()` pour la route vers laquelle GitLab redirige
+  - [X] compléter `oauthCallbackHandler()` pour la route vers laquelle GitLab redirige
 - Gestion des clefs
-  - [ ] compléter `GET /key/:username`
-  - [ ] compléter `POST /key/`
+  - [X] compléter `GET /key/:username`
+  - [X] compléter `POST /key/`
   - [ ] choisir et motiver un algorithme de chiffrement
   - [ ] compléter `POST /crypt/encrypt`
   - [ ] compléter `POST /crypt/decrypt`

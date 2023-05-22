@@ -54,7 +54,7 @@ async function verifyJWTToken(request, reply) {
         })
         return reply.code(401).send(error)
       } else {
-        request.server.log.info(decoded)
+        request.server.log.info("Decoded JWT : " + decoded.sub + "; " + decoded.role)
         setRequestUser(decoded.sub, decoded.role, request)
       }
     });
@@ -70,7 +70,7 @@ async function verifyJWTToken(request, reply) {
 // intermediate function : DO NOT reply JWT. Used by postAuthLoginHandler and "@fastify/basic-auth"
 async function verifyLoginPassword(username, password, request, reply) {
   request.server.log.info("verifyLoginPassword")
-  request.server.log.info(`check if user ${username} exists with password ${password}`)
+  request.server.log.info(`check if user ${username} exists with provided password`)
   if(!username || !password) {
     throw new Error(`Username or password is missing`)
   }
@@ -130,7 +130,6 @@ async function oauthCallbackHandler(request, reply) {
   request.server.log.info(`authorization code: ${authorizationCode}`)
   try {
     const profile = await fetchGitlabUserProfile(authorizationCode)
-    request.server.log.info(profile)
     if(!profile.username || !profile.role) {
       reply.headers({
         'content-type': 'application/json; charset=utf-8'

@@ -150,10 +150,9 @@ async function build(options = {}) {
     authenticate: false, 
   })
 
-  // TODO : configurer l'authentification OAuth sur la forge
   app.register(fastifyOauth2, {
     name: "OAuth2",
-    scope: "read_user",
+    scope: ["read_user"],
     credentials: {
       client: {
         id: process.env.OAUTH2_CLIENT_ID_GITLAB,

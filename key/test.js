@@ -5,7 +5,7 @@ import assert from "node:assert/strict"
 // Fastify app builder
 import build from "../app.js"
 
-describe.skip("Key routes", async () => {
+describe("Key routes", async () => {
   let app
 
   let jwtTokenUser1
