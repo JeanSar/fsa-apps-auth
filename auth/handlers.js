@@ -151,7 +151,7 @@ async function oauthCallbackHandler(request, reply) {
     if (results.rowCount == 1) {
       const role = results.rows[0].role
       setRequestUser(username, role, request)
-      const jwtToken = generateJWTToken(username, role)
+      const jwtToken = generateJWTToken(request.user.username, request.user.role)
       return reply.code(200).send(jwtToken)
     } else {
       reply.headers({

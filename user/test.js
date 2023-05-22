@@ -6,7 +6,7 @@ import assert from "node:assert/strict"
 import build from "../app.js"
 
 // TODO
-describe.skip("User routes on /user (via JWT authentication)", async () => {
+describe("User routes on /user (via JWT authentication)", async () => {
   let app
   let jwtTokenUser1
   let jwtTokenAdmin

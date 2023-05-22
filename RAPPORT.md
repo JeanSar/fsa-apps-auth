@@ -32,12 +32,12 @@ Cocher ce qui est fonctionnel dans votre application.
 - Gestion des clefs
   - [X] compléter `GET /key/:username`
   - [X] compléter `POST /key/`
-  - [ ] choisir et motiver un algorithme de chiffrement
-  - [ ] compléter `POST /crypt/encrypt`
-  - [ ] compléter `POST /crypt/decrypt`
+  - [X] choisir et motiver un algorithme de chiffrement
+  - [X] compléter `POST /crypt/encrypt`
+  - [X] compléter `POST /crypt/decrypt`
 - Autorisations
-  - [ ] sur les routes `/user`
-  - [ ] sur les routes `/key`
+  - [X] sur les routes `/user`
+  - [X] sur les routes `/key`
 
 ## Recommandations générales
 
