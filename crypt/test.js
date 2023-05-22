@@ -6,7 +6,7 @@ import assert from "node:assert/strict"
 import build from "../app.js"
 
 // TODO : activer ces tests et les vérifier
-describe.skip("Crypt routes", async () => {
+describe("Crypt routes", async () => {
   let app
 
   let jwtTokenUser1

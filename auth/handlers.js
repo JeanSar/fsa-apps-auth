@@ -80,7 +80,6 @@ async function verifyLoginPassword(username, password, request, reply) {
       "SELECT role, password FROM account WHERE username = $1",
       [username]
     )
-    console.log(results)
     if (results.rowCount == 1) {
       if( await bcrypt.compare(password, results.rows[0].password)) {
         const role = results.rows[0].role
