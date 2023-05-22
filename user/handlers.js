@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 const saltRounds = 10
 
 async function getUserHandler(request, reply) {
+  request.server.log.info("getUserHandler")
   try {
     if (!request.params || !request.params.username) {
       reply.headers({
@@ -32,6 +33,7 @@ async function getUserHandler(request, reply) {
 }
 
 async function postUserHandler(request, reply) {
+  request.server.log.info("postUserHandler")
   try {
     if (!request.body.username
       || !request.body.email
@@ -82,6 +84,7 @@ async function postUserHandler(request, reply) {
 }
 
 async function delUserHandler(request, reply) {
+  request.server.log.info("delUserHandler")
   try {
     if (!request.params || !request.params.username) {
       reply.headers({

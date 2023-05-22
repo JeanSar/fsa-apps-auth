@@ -3,6 +3,12 @@ import { randomBytes } from "node:crypto"
 async function getKeyHandler(request, reply) {
   request.server.log.info("getKeyHandler")
   try {
+    if (!request.params || !request.params.username) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(400).send(new Error(`Parameter username is missing`))
+    }
     const { username } = request.params
 
     const results = await request.server.pg.query(
@@ -23,6 +29,12 @@ async function getKeyHandler(request, reply) {
 async function postKeyHandler(request, reply) {
   request.server.log.info("postKeyHandler")
   try {
+    if (!request.body.keyname) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(400).send(new Error("Parameter 'keyname' in request body"))
+    }
     const { username } = request.user
     const { keyname } = request.body
     const bytes = randomBytes(32).toString("hex")
