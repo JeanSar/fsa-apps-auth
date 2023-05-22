@@ -122,13 +122,19 @@ async function fetchGitlabUserProfile(glAccessToken) {
 // Get GitHub access token from authorization code, manual
 async function oauthCallbackHandler(request, reply) {
   request.server.log.info("oauthCallbackHandler")
-  if (!request.query) {
-    throw new Error("Empty query provided")
+  if (!request.query.code || !request.query.state) {
+    throw new Error("Code or state missing in query parameters")
   }
-  const { code: authorizationCode } = request.query
-  request.server.log.info(`authorization code: ${authorizationCode}`)
   try {
-    const tokenResponse = await this.OAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+    let tokenResponse
+    try {
+      tokenResponse = await this.OAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+    } catch(error) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(401).send(error)
+    }
     const profile = await fetchGitlabUserProfile(tokenResponse.token.access_token)
     console.log(profile)
     if (!profile.username) {
@@ -159,7 +165,7 @@ async function oauthCallbackHandler(request, reply) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(401).send(new Error(`Unable to perfom oauth`))
+    return reply.code(500).send(new Error(`Unable to perfom oauth`))
   }
 
 }
