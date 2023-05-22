@@ -38,7 +38,7 @@ async function postEncryptHandler(request, reply) {
   }
   try {
     request.server.log.info(request.body)
-    const content = request.body.content
+    const { content } = request.body
     request.server.log.info(content)
     const iv = randomBytes(16)
     const cipher = createCipheriv(algorithm, request.key, iv);
@@ -65,12 +65,11 @@ async function postDecryptHandler(request, reply) {
   }
   try {
     request.server.log.info(request.body)
-    const content = request.body.content
-    request.server.log.info(content)
-    const decipher = createDecipheriv(algorithm, request.key, Buffer.from(request.body.iv, "hex"))
+    const {content, iv} = request.body
+    const decipher = createDecipheriv(algorithm, request.key, Buffer.from(iv, "hex"))
     let decrypted = decipher.update(content, 'hex', 'utf8')
     decrypted += decipher.final('utf8')
-    reply.send({ content: decrypted })
+    reply.send(decrypted)
   } catch(error) {
     console.log(error)
     request.server.log.error(error)

@@ -7,16 +7,16 @@ const secret = Buffer.from(process.env.JWT_SECRET, "hex")
 
 // helper
 function generateJWTToken(username, role) {
-  if(!username || !role) {
+  if (!username || !role) {
     throw new Error("generateJWTToken: Invalid parameter")
   }
   try {
     const token = jwt.sign(
-      { 
-        sub: username, 
-        role: role, 
-        iat: Math.floor(Date.now() / 1000)  + (60 * 60)
-      }, 
+      {
+        sub: username,
+        role: role,
+        iat: Math.floor(Date.now() / 1000) + (60 * 60)
+      },
       secret
     )
     return token
@@ -41,14 +41,14 @@ async function verifyJWTToken(request, reply) {
     throw new Error(`No JWT token provided`)
   }
   const auth = request.raw.headers.authorization
-  if(!auth.startsWith('Bearer ')) {
+  if (!auth.startsWith('Bearer ')) {
     throw new Error(`Not a JWT token`)
   }
   try {
     const token = auth.split(' ')[1]
     request.server.log.info("Parsing JWT : " + token)
-    jwt.verify(token, secret, function(error, decoded) {
-      if(error) {
+    jwt.verify(token, secret, function (error, decoded) {
+      if (error) {
         reply.headers({
           'content-type': 'application/json; charset=utf-8'
         })
@@ -58,7 +58,7 @@ async function verifyJWTToken(request, reply) {
         setRequestUser(decoded.sub, decoded.role, request)
       }
     });
-  } catch(error) {
+  } catch (error) {
     request.server.log.error(error)
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
@@ -71,7 +71,7 @@ async function verifyJWTToken(request, reply) {
 async function verifyLoginPassword(username, password, request, reply) {
   request.server.log.info("verifyLoginPassword")
   request.server.log.info(`check if user ${username} exists with provided password`)
-  if(!username || !password) {
+  if (!username || !password) {
     throw new Error(`Username or password is missing`)
   }
   try {
@@ -81,7 +81,7 @@ async function verifyLoginPassword(username, password, request, reply) {
       [username]
     )
     if (results.rowCount == 1) {
-      if( await bcrypt.compare(password, results.rows[0].password)) {
+      if (await bcrypt.compare(password, results.rows[0].password)) {
         const role = results.rows[0].role
         setRequestUser(username, role, request)
       } else {
@@ -122,28 +122,44 @@ async function fetchGitlabUserProfile(glAccessToken) {
 // Get GitHub access token from authorization code, manual
 async function oauthCallbackHandler(request, reply) {
   request.server.log.info("oauthCallbackHandler")
-  if(!request.query) {
+  if (!request.query) {
     throw new Error("Empty query provided")
   }
   const { code: authorizationCode } = request.query
   request.server.log.info(`authorization code: ${authorizationCode}`)
   try {
-    const profile = await fetchGitlabUserProfile(authorizationCode)
-    if(!profile.username || !profile.role) {
+    const tokenResponse = await this.OAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+    const profile = await fetchGitlabUserProfile(tokenResponse.token.access_token)
+    console.log(profile)
+    if (!profile.username) {
       reply.headers({
         'content-type': 'application/json; charset=utf-8'
       })
       return reply.code(401).send(new Error(profile.message ?? "Unable to fetch Gitab user profile"))
     }
-    setRequestUser(profile.username, profile.role, request)
-    const jwtToken = generateJWTToken(request.user.username, request.user.role)
-    return reply.code(200).send(jwtToken)
-  } catch(error) {
+    const username = profile.username
+    const results = await request.server.pg.query(
+      "SELECT role FROM account WHERE username = $1;", 
+      [username]
+    )
+    if (results.rowCount == 1) {
+      const role = results.rows[0].role
+      setRequestUser(username, role, request)
+      const jwtToken = generateJWTToken(username, role)
+      return reply.code(200).send(jwtToken)
+    } else {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(401).send(new Error(`Username not found`))
+    }
+
+  } catch (error) {
     request.server.log.error(error)
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
-    return reply.code(500).send(new Error(`Unable to perfom oauth`))
+    return reply.code(401).send(new Error(`Unable to perfom oauth`))
   }
 
 }
@@ -151,20 +167,20 @@ async function oauthCallbackHandler(request, reply) {
 // Route handler for login/password
 async function postAuthLoginHandler(request, reply) {
   request.server.log.info("postAuthLoginHandler")
-  if(!request.body.username || !request.body.password) {
+  if (!request.body.username || !request.body.password) {
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
     })
     return reply.code(401).send(new Error(`Username or password is missing`))
   }
-  try  {
+  try {
     const username = request.body.username
     const password = request.body.password
     await verifyLoginPassword(username, password, request, reply)
     const jwtToken = generateJWTToken(request.user.username, request.user.role)
     reply.code(200).send(jwtToken)
 
-  } catch(error) {
+  } catch (error) {
     request.server.log.error(error)
     reply.headers({
       'content-type': 'application/json; charset=utf-8'
