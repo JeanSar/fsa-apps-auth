@@ -10,7 +10,12 @@ async function getKeyHandler(request, reply) {
       return reply.code(400).send(new Error(`Parameter username is missing`))
     }
     const { username } = request.params
-
+    if (!request.user.isAdmin && request.user.username !== username) {
+      reply.headers({
+        'content-type': 'application/json; charset=utf-8'
+      })
+      return reply.code(403).send(new Error('Forbidden'))
+    }
     const results = await request.server.pg.query(
       "SELECT keyname FROM private_key WHERE username = $1;",
       [username],
@@ -37,6 +42,7 @@ async function postKeyHandler(request, reply) {
     }
     const { username } = request.user
     const { keyname } = request.body
+
     const bytes = randomBytes(32).toString("hex")
 
     request.server.log.info(`post key ${keyname} from ${username} (${bytes})`)
