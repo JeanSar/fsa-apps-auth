@@ -15,7 +15,8 @@ function generateJWTToken(username, role) {
       {
         sub: username,
         role: role,
-        iat: Math.floor(Date.now() / 1000) + (60 * 60)
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + (60 * 60)
       },
       secret
     )
