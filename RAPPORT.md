@@ -67,19 +67,18 @@ Une liste succincte :
 
 ### Reverse proxy
 - Load balancer
-- SSL (Mis en place en prod) avec certificat HTTPS par une autorité de certification reconnue
-- Nom de domaine 
-- Vérification des user-agents
-- Limitationddu nombre de requêtes par client et par seconde (par exemple 15 toutes les 5 secondes)
+- SSL avec certificat HTTPS par une autorité de certification reconnue (Mis en place en prod)
+- Nom de domaine (Mis en place en prod)
+- Limitation du nombre de requêtes par client et par seconde (par exemple 15 toutes les 5 secondes)
 - Mise en place d'une black-list d'adresse ip / systématisation de la saisie des clients suspects
 
 ### Application node
 - Retrait des fichiers non-destinés à la production (.git*, .env*, *.md, etc.)
 - Automatiser des actions à réaliser en cas d'envoi systématiques de mots de passes erronées pour un même utilisateur 
-- Assurer une protection contre les attaques par injections de codes (php/js/sql etc) notamment sur les messages à encrypter/decrypter (En production, l'application n'est protégés que des injections SQL)
+- Assurer une protection contre les attaques par injections de codes (json/js/sql etc) notamment sur les messages à encrypter/decrypter (En production/dev, l'application semble être a minima protégée des injections SQL et JSON --> géré dans le code avec fastify)
 - Utilisation d'expression régulière pour les différentes données réceptionnées (adresse mail, nom d'utilisateur)
 - Interdire l'utilisation d'adresse mail jetable en se basant sur une liste régulièrement mise à jour
-- Ajouter une route pour modifier un mot de passe pour un utilisateur
+- Ajouter une route pour modifier un mot de passe/ adresse mail pour un utilisateur
 - Validation d'un nouvel utilisateur à sa première connexion avec un code envoyé par mail
 - Autoriser uniquement les mots de passes respectant les dernières recommendations des professionels en la matière (par exemple +14 caractères, au moins une majuscule/minuscule/chiffre/caractère spécial)
 - Interdire l'usage de token d'authentification n'expirant pas au bout de 15/20 minutes pour les utilisateurs non-admins (FAIT EN DEV: les tokens générés expirent actuellement au bout de une heure pour tous les utilisateurs, EN PROD: ils expirent au bout de 3 jours pour touts les utilisateurs)
