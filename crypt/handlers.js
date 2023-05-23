@@ -54,7 +54,6 @@ async function postEncryptHandler(request, reply) {
   }
 }
 
-// TODO : compléter
 async function postDecryptHandler(request, reply) {
   request.server.log.info("postDecryptHandler")
   if(!request.body.content || !request.body.iv) {

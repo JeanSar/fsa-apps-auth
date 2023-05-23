@@ -5,7 +5,6 @@ import assert from "node:assert/strict"
 // Fastify app builder
 import build from "../app.js"
 
-// TODO : activer ces tests et les vérifier
 describe("Crypt routes", async () => {
   let app
 

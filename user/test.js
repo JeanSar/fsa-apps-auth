@@ -5,7 +5,6 @@ import assert from "node:assert/strict"
 // Fastify app builder
 import build from "../app.js"
 
-// TODO
 describe("User routes on /user (via JWT authentication)", async () => {
   let app
   let jwtTokenUser1

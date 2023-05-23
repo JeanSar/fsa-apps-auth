@@ -150,7 +150,6 @@ describe("OAuth2 authentication on /auth/gitlab",  async () => {
     assert.ok(redirectParameters.get("scope"))
     assert.ok(redirectParameters.get("state"))
     state = redirectParameters.get("state")
-    // TODO check if redirect_uri is OK
     assert.ok(redirectParameters.get("redirect_uri"))
   })
 
