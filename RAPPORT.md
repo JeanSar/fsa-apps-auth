@@ -49,7 +49,7 @@ Cocher ce qui est fonctionnel dans votre application.
 L'algorithme utilisé est Bcrypt (Basé sur Blowfish, variante 2a) et fonctionne par chiffrement par bloc. Il est particulièrement intéressant pour sa robustesse aux attaques brute-force et rainbow table avec son utilisation d'un sel et sa possibilité de spécifier son nombre d'itérations (salt round). Ainsi, en augmentant la durée du hash, l'algorithme peut s'adapter à l'augmentation de la puissance des processeurs.
 
 ### Algorithme de chiffrement
-L'algorithme utilisé est AES-256-CTR. Cet algorithme est intéressant dans notre cas d'utilisation car il permet un chiffrement symétrique (avec une seule clé).L'utilisation d'un algorithme AES 256 bits, plutôt que 128, est plus sûr face aux attaques brutes force car il utilise une clé deux fois plus longue (32 octets).
+L'algorithme utilisé est AES-256-CTR. Cet algorithme est intéressant dans notre cas d'utilisation car il permet un chiffrement symétrique (avec une seule clé).L'utilisation d'un algorithme AES 256 bits, plutôt que 128, est plus sûr face aux attaques brute-force car il utilise une clé deux fois plus longue (32 octets).
 CTR est préféré aux autres modes pour les raisons suivantes :
 - Absence de padding
 - Utilisation d'un IV permettant de générer des chiffrements différents pour un même message/clé
