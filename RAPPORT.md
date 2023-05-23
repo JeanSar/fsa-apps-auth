@@ -3,6 +3,9 @@
 - [Rapport TP Authentification](#rapport-tp-authentification)
   - [Administratif](#administratif)
   - [Travail réalisé](#travail-réalisé)
+  - [Algorithmes](#algorithmes)
+    - [Algorithme de hashage du mot de passe](#algorithme-de-hashage-du-mot-de-passe)
+    - [Algorithme de chiffrement](#algorithme-de-chiffrement)
   - [Recommandations générales](#recommandations-générales)
     - [Fonctionnalités manquantes de l'application](#fonctionnalités-manquantes-de-lapplication)
     - [PostgreSQL](#postgresql)
@@ -39,6 +42,18 @@ Cocher ce qui est fonctionnel dans votre application.
   - [X] sur les routes `/user`
   - [X] sur les routes `/key`
 
+## Algorithmes
+
+### Algorithme de hashage du mot de passe
+
+L'algorithme utilisé est Bcrypt (Basé sur Blowfish, variante 2a) et fonctionne par chiffrement par bloc. Il est particulièrement intéressant pour sa robustesse aux attaques brute-force et rainbow table avec son utilisation d'un sel et sa possibilité de spécifier son nombre d'itérations (salt round). Ainsi, en augmentant la durée du hash, l'algorithme peut s'adapter à l'augmentation de la puissance des processeurs.
+
+### Algorithme de chiffrement
+L'algorithme utilisé est AES-256-CTR. Cet algorithme est intéressant dans notre cas d'utilisation car il permet un chiffrement symétrique (avec une seule clé).L'utilisation d'un algorithme AES 256 bits, plutôt que 128, est plus sûr face aux attaques brutes force car il utilise une clé deux fois plus longue (32 octets).
+CTR est préféré aux autres modes pour les raisons suivantes :
+- Absence de padding
+- Utilisation d'un IV permettant de générer des chiffrements différents pour un même message/clé
+
 ## Recommandations générales
 
 Lister ici les recommandations générales et fonctionnalités manquantes de l'application.
@@ -49,13 +64,12 @@ Préciser si elles sont déjà effectuées ou pas sur le serveur de démonstrati
 Une liste succincte :
 - Distinction administrateurs techniques vs fonctionnels
 
-
-
 ### PostgreSQL
-- Limitation du nombre de requêtes et de leurs volumes 
+- Limitation du nombre de requêtes et leurs volumes 
 - Mettre en place un outil de monitoring
 - Systématiser le backup des bases de données de manière très régulière
 - Mettre en place une black-list des utilisateurs suspects en base
+- Augmenter le nombre des "salt round" du hashage des mots de passes en base de données pour correspondre à une difficulté de hash suffisante pour se prémunir des attaques brute-force (relative à la puissance de calcul des processeurs actuels) tout en restant cohérent sur un ratio impact/risque
 
 ### OS
 - Mettre en place un outil de monitoring
@@ -81,4 +95,4 @@ Une liste succincte :
 - Ajouter une route pour modifier un mot de passe/ adresse mail pour un utilisateur
 - Validation d'un nouvel utilisateur à sa première connexion avec un code envoyé par mail
 - Autoriser uniquement les mots de passes respectant les dernières recommendations des professionels en la matière (par exemple +14 caractères, au moins une majuscule/minuscule/chiffre/caractère spécial)
-- Interdire l'usage de token d'authentification n'expirant pas au bout de 15/20 minutes pour les utilisateurs non-admins (FAIT EN DEV: les tokens générés expirent actuellement au bout de une heure pour tous les utilisateurs, EN PROD: ils expirent au bout de 3 jours pour touts les utilisateurs)
+- Faire expirer les tokens d'authentification au bout de 15/20 minutes pour les utilisateurs non-admins (FAIT EN DEV: les tokens générés expirent actuellement au bout de une heure pour tous les utilisateurs, EN PROD: ils expirent au bout de 3 jours pour touts les utilisateurs)
